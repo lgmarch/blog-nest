@@ -40,13 +40,13 @@ jobs:
     # Run
     - name: Linter
       working-directory: project
-      run: npm run affected:test
+      run: npx nx affected -t lint
       # run: npx nx affected -t lint --base=remotes/origin/master~1 --head=HEAD
 
     - name: Tests
       working-directory: project
-      run: npx nx affected -t test --base=remotes/origin/master~1 --head=HEAD
+      run: npx nx affected -t test
 
     - name: Build
       working-directory: project
-      run: npx nx affected -t build --base=remotes/origin/master~1 --head=HEAD
+      run: npx nx affected -t build
