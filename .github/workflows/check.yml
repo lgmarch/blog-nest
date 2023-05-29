@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [16.x]
 
     steps:
 
@@ -40,8 +40,8 @@ jobs:
     # Run
     - name: Linter
       working-directory: project
-      run: npx nx affected -t lint --base=remotes/origin/master~1 --head=HEAD
-      # run: npm run affected:test
+      run: npm run affected:test
+      # run: npx nx affected -t lint --base=remotes/origin/master~1 --head=HEAD
 
     - name: Tests
       working-directory: project
