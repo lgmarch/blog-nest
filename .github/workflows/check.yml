@@ -1,0 +1,52 @@
+name: check
+
+on:
+  pull_request:
+    branches:
+    - master
+    - release
+    types: [opened, reopened, synchronize]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+
+    # Install Node
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    # Install dependencies
+    - name: Install dependencies
+      working-directory: project
+      run: npm install
+
+    - uses: nrwl/nx-set-shas@v3
+      with:
+        main-branch-name: master
+
+    # Run
+    - name: Linter
+      working-directory: project
+      run: npx nx affected -t lint
+      # run: npx nx affected -t lint --base=remotes/origin/master~1 --head=HEAD
+
+    - name: Tests
+      working-directory: project
+      run: npx nx affected -t test
+
+    - name: Build
+      working-directory: project
+      run: npx nx affected -t build

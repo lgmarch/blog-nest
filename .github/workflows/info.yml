@@ -1,0 +1,63 @@
+name: info
+
+on:
+  pull_request:
+    branches:
+    - master
+    - release
+    types: [opened, reopened, synchronize]
+
+jobs:
+
+  # Get branch info
+  branch-info:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # Get current branch name
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v5.2
+      # Get base branch name to compare with. Base branch on a PR, "main" branch on pushing.
+      - name: Get base branch name
+        id: get-base-branch-name
+        run: |
+            if [[ "${{github.event.pull_request.base.ref}}" != "" ]]; then
+              echo "branch=$github.event.pull_request.base.ref" >> $GITHUB_OUTPUT
+            else
+              echo "branch=master" >> $GITHUB_OUTPUT
+            fi
+            echo "base_branch = ${{ github.event.pull_request.base.ref }}"
+            echo "current_branch = ${{ steps.branch-name.outputs.current_branch }}"
+    outputs:
+      # Export the branch names as output to be able to use it in other jobs
+      base-branch-name: ${{ steps.get-base-branch-name.outputs.branch }}
+      branch-name: ${{ steps.branch-name.outputs.current_branch }}
+
+  # Defining the last commit
+  last-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set base commit hash
+        id: get-commit
+        run: |
+          commit=${{ github.event.before }}
+          if git branch --contains "$commit"; then
+            echo "No force push detected, continuing..."
+          else
+            # get the commit before this one
+            commit=$(git log --format="%H" -n 2 | tail -n 1)
+          fi
+          echo "BASE_COMMIT=$commit" >> $GITHUB_ENV
+      - name: Display base commit
+        run: echo "$BASE_COMMIT"
+
+    outputs:
+      commit: ${{ steps.get-commit.outputs.BASE_COMMIT }}
