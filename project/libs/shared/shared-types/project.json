@@ -1,5 +1,5 @@
 {
-  "name": "shared-shared-types",
+  "name": "shared-types",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/shared-types/src",
   "projectType": "library",

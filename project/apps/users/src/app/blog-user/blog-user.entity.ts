@@ -1,6 +1,5 @@
 import { IUser } from '@project/shared/shared-types';
-import { UserRole } from 'libs/shared/shared-types/src/lib/user-role.enum';
-
+import { UserRole } from '@project/shared/shared-types';
 export class BlogUserEntity implements IUser {
   _id?: string;
   email: string;
