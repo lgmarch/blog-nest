@@ -1,10 +1,11 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { BlogUserMemoryRepository } from '../blog-user/blog-user-memory.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { BlogUserEntity } from '../blog-user/blog-user.entity';
 import { UserRole } from '@project/shared/shared-types';
 import dayjs from 'dayjs';
-import { AUTH_USER_EXISTS } from './auth.constant';
+import { AuthUser } from './auth.constant';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -14,8 +15,9 @@ export class AuthService {
     const {email, firstName, lastName, password} = dto;
 
     const user = this.blogUserRepository.findByEmail(email);
-    if(user) {
-      throw new ConflictException(AUTH_USER_EXISTS);
+
+    if(!user) {
+      throw new ConflictException(AuthUser.AUTH_USER_EXISTS);
     }
 
     const blogUser = {
@@ -26,5 +28,27 @@ export class AuthService {
     const userEntity = await new BlogUserEntity(blogUser).setPassword(password);
 
     return this.blogUserRepository.create(userEntity);
+  }
+
+  public async login(dto: LoginUserDto) {
+    const {email, password} = dto;
+
+    const user = await this.blogUserRepository.findByEmail(email);
+
+    if(!user) {
+      throw new NotFoundException(AuthUser.AUTH_USER_NOT_FOUND);
+    }
+
+    const userEntity = await new BlogUserEntity(user);
+
+    if(!userEntity.comparePassword(password)) {
+      throw new UnauthorizedException(AuthUser.AUTH_USER_PASSWORD_WRONG);
+    }
+
+    return userEntity;
+  }
+
+  public async getUser(id: string) {
+    return this.blogUserRepository.findById(id);
   }
 }
