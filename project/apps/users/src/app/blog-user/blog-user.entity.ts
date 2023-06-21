@@ -1,5 +1,7 @@
 import { IUser } from '@project/shared/shared-types';
 import { UserRole } from '@project/shared/shared-types';
+import { compare, genSalt, hash } from 'bcrypt';
+import { SALT_ROUNDS } from './blog-user.constant';
 export class BlogUserEntity implements IUser {
   _id?: string;
   email: string;
@@ -27,4 +29,16 @@ export class BlogUserEntity implements IUser {
   public toObject() {
     return {...this};
   }
+
+  public async setPassword(password: string): Promise<BlogUserEntity> {
+    const salt = await genSalt(SALT_ROUNDS);
+    this.passwordHash = await hash (password, salt);
+
+    return this;
+  }
+
+  public async comparePassword(password: string): Promise<boolean> {
+    return compare(password, this.passwordHash);
+  }
+
 }
