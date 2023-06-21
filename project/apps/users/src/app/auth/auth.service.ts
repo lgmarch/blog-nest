@@ -45,10 +45,10 @@ export class AuthService {
       throw new UnauthorizedException(AuthUser.AUTH_USER_PASSWORD_WRONG);
     }
 
-    return userEntity;
+    return user;
   }
 
-  public async getUser(id: string) {
+  public async getUserById(id: string) {
     return this.blogUserRepository.findById(id);
   }
 }

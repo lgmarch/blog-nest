@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { IUser } from '@project/shared/shared-types';
 import { ICrudRepository } from '@project/util/util-types';
 import { BlogUserEntity } from './blog-user.entity';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class BlogUserMemoryRepository implements ICrudRepository<BlogUserEntity, string, IUser> {
   private repository: {[key: string]: IUser} = {};
 
   public async create(entity: BlogUserEntity): Promise <IUser> {
-    const item = {...entity.toObject(), _id: crypto.randomUUID()};
+    const item = {...entity.toObject(), _id: randomUUID()};
     this.repository[item._id] = item;
 
     return item;
