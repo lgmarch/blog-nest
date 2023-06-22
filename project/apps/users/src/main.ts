@@ -11,6 +11,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  const globalPrefix = 'api';
+  app.setGlobalPrefix(globalPrefix);
+
   const configSwagger = new DocumentBuilder()
   .setTitle('The "Users" service')
   .setDescription('Users service API')
@@ -19,9 +22,6 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, configSwagger);
   SwaggerModule.setup('spec', app, document);
-
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
 
   const port = process.env.PORT || 3000;
 
