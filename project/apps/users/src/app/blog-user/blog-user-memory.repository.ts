@@ -29,7 +29,7 @@ export class BlogUserMemoryRepository implements ICrudRepository<BlogUserEntity,
       return null;
     }
 
-    return { ...user};
+    return {...user};
   }
 
   public async update(id: string, entity: BlogUserEntity): Promise<IUser> {

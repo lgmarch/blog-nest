@@ -39,6 +39,6 @@ export class BlogUserEntity implements IUser {
   }
 
   public async comparePassword(password: string): Promise<boolean> {
-    return compare(password, this.passwordHash);
+    return await compare(password, this.passwordHash);
   }
 }

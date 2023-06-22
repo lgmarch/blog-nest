@@ -14,9 +14,9 @@ export class AuthService {
   public async register(dto: CreateUserDto) {
     const {email, firstName, lastName, password} = dto;
 
-    const user = this.blogUserRepository.findByEmail(email);
+    const user = await this.blogUserRepository.findByEmail(email);
 
-    if(!user) {
+    if(user) {
       throw new ConflictException(AuthUser.AUTH_USER_EXISTS);
     }
 
@@ -41,7 +41,7 @@ export class AuthService {
 
     const userEntity = await new BlogUserEntity(user);
 
-    if(!userEntity.comparePassword(password)) {
+    if(!await userEntity.comparePassword(password)) {
       throw new UnauthorizedException(AuthUser.AUTH_USER_PASSWORD_WRONG);
     }
 
