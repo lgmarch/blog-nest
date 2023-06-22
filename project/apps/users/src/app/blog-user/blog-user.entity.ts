@@ -24,7 +24,8 @@ export class BlogUserEntity implements IUser {
     this.lastName = blogUser.lastName,
     this.avatar = blogUser.avatar,
     this.passwordHash = blogUser.passwordHash,
-    this.role = blogUser.role
+    this.role = blogUser.role,
+    this.registrationDate = blogUser.registrationDate
   }
 
   public toObject() {
