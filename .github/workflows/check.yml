@@ -2,10 +2,10 @@ name: check
 
 on:
   pull_request:
+  push:
     branches:
-    - master
-    - release
-    types: [opened, reopened, synchronize]
+      - master
+      - release
 
 jobs:
   check:

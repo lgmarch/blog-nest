@@ -49,6 +49,11 @@ export class AuthService {
   }
 
   public async getUserById(id: string) {
-    return this.blogUserRepository.findById(id);
+    const user = await this.blogUserRepository.findById(id);
+
+    if(!user) {
+      throw new NotFoundException(AuthUser.AUTH_USER_NOT_FOUND);
+    }
+    return user;
   }
 }
