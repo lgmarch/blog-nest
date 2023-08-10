@@ -22,8 +22,6 @@ export default registerAs('db', (): DbConfig => {
     authBase: process.env.MONGO_AUTH_BASE,
   };
 
-  console.log(config);
-
   const validationSchema = Joi.object<DbConfig>({
     db: Joi.string().required(),
     host: Joi.string().hostname().required(),
