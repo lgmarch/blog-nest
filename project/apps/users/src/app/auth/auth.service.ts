@@ -1,5 +1,10 @@
-import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { BlogUserMemoryRepository } from '../blog-user/blog-user-memory.repository';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { BlogUserRepository } from '../blog-user/blog-user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { BlogUserEntity } from '../blog-user/blog-user.entity';
 import { UserRole } from '@project/shared/shared-types';
@@ -9,21 +14,26 @@ import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly blogUserRepository: BlogUserMemoryRepository) {}
+  constructor(private readonly blogUserRepository: BlogUserRepository) {}
 
   public async register(dto: CreateUserDto) {
-    const {email, firstName, lastName, password} = dto;
+    const { email, firstName, lastName, password } = dto;
 
     const user = await this.blogUserRepository.findByEmail(email);
 
-    if(user) {
+    if (user) {
       throw new ConflictException(AuthUser.AUTH_USER_EXISTS);
     }
 
     const blogUser = {
-      email, firstName, lastName, avatar: '', passwordHash: '',
-      role: UserRole.User, registrationDate: dayjs().toDate(),
-    }
+      email,
+      firstName,
+      lastName,
+      avatar: '',
+      passwordHash: '',
+      role: UserRole.User,
+      registrationDate: dayjs().toDate(),
+    };
 
     const userEntity = await new BlogUserEntity(blogUser).setPassword(password);
 
@@ -31,17 +41,17 @@ export class AuthService {
   }
 
   public async login(dto: LoginUserDto) {
-    const {email, password} = dto;
+    const { email, password } = dto;
 
     const user = await this.blogUserRepository.findByEmail(email);
 
-    if(!user) {
+    if (!user) {
       throw new NotFoundException(AuthUser.AUTH_USER_NOT_FOUND);
     }
 
     const userEntity = await new BlogUserEntity(user);
 
-    if(!await userEntity.comparePassword(password)) {
+    if (!(await userEntity.comparePassword(password))) {
       throw new UnauthorizedException(AuthUser.AUTH_USER_PASSWORD_WRONG);
     }
 
@@ -51,7 +61,7 @@ export class AuthService {
   public async getUserById(id: string) {
     const user = await this.blogUserRepository.findById(id);
 
-    if(!user) {
+    if (!user) {
       throw new NotFoundException(AuthUser.AUTH_USER_NOT_FOUND);
     }
     return user;
